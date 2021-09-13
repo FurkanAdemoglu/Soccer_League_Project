@@ -1,4 +1,4 @@
-package com.example.soccerleagueproject.UI.Fixtures
+package com.example.soccerleagueproject.UI.FixturesOnBoardings
 
 import android.app.Application
 import android.util.Log
@@ -11,7 +11,6 @@ import com.example.soccerleagueproject.model.TeamsItem
 import com.example.soccerleagueproject.util.ServiceManager
 import com.example.soccerleagueproject.util.SingleLiveEvent
 import kotlinx.coroutines.launch
-import retrofit2.Call
 import java.lang.Exception
 
 class FixtureCreateViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,7 +19,7 @@ class FixtureCreateViewModel(application: Application) : AndroidViewModel(applic
 
     val errorStateLiveData = SingleLiveEvent<String>()
 
-    fun getTeams(){
+    fun getTeams() {
         viewModelScope.launch {
             try {
                 val result = ServiceManager.service.getTeamNames()
@@ -28,13 +27,17 @@ class FixtureCreateViewModel(application: Application) : AndroidViewModel(applic
                 for (showResult in result) {
                     showList.add(showResult)
                 }
+
                 showListMutableLiveData.postValue(showList)
             } catch (e: Exception) {
                 errorStateLiveData.postValue("Bir hata oluştu")
                 Log.v("hata", "service call error", e)
             }
         }
+
     }
 
 
 }
+
+

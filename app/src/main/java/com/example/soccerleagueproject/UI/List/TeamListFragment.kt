@@ -1,6 +1,7 @@
 package com.example.soccerleagueproject.UI.List
 
 import android.animation.Animator
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.soccerleagueproject.Adapters.ListViewAdapter
 import com.example.soccerleagueproject.R
 import com.example.soccerleagueproject.databinding.FragmentTeamListBinding
+import java.io.Serializable
 
 class TeamListFragment : Fragment(R.layout.fragment_team_list) {
 
@@ -75,3 +77,5 @@ class TeamListFragment : Fragment(R.layout.fragment_team_list) {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         } }
 }
+
+
