@@ -4,17 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soccerleagueproject.R
 import com.example.soccerleagueproject.model.Fixture
-import com.example.soccerleagueproject.model.TeamsItem
 
-class FixtureAdapter: RecyclerView.Adapter<FixtureAdapter.ListViewHolder>() {
+class FixtureAdapter: RecyclerView.Adapter<FixtureAdapter.FixturesViewHolder>() {
 
     var fixtureList:List<Fixture>?=null
-    class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val containerCardView = itemView.findViewById<CardView>(R.id.fixtureCardView)
+    class FixturesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textViewHomeName = itemView.findViewById<TextView>(R.id.home_team_name)
         val textViewAwayName=itemView.findViewById<TextView>(R.id.away_team_name)
         fun bind(fixture: Fixture) {
@@ -27,12 +24,12 @@ class FixtureAdapter: RecyclerView.Adapter<FixtureAdapter.ListViewHolder>() {
         this.fixtureList = fixtureList
         notifyDataSetChanged()
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FixturesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_fixture, parent, false)
-        return ListViewHolder(view)
+        return FixturesViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FixturesViewHolder, position: Int) {
         fixtureList?.get(position)?.let { holder.bind(it) }
     }
 

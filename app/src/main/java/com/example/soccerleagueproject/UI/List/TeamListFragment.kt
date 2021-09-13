@@ -37,6 +37,7 @@ class TeamListFragment : Fragment(R.layout.fragment_team_list) {
         viewModel.getTeams()
         initView()
         observeViewModel()
+
     }
     private fun initView(){
         _binding.teamRecycler.layoutManager=LinearLayoutManager(context)

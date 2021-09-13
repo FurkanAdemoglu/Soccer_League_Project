@@ -1,7 +1,10 @@
 package com.example.soccerleagueproject.UI.FixturesOnBoardings
 
 import android.os.Bundle
+import android.transition.Slide
+import android.transition.TransitionManager
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +12,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.restaurantapplicationgraduationproject.ui.onBoarding.utils.OnBoardingAdapter
-import com.example.restaurantapplicationgraduationproject.ui.onBoarding.utils.ZoomOutPageTransformer
 import com.example.soccerleagueproject.Adapters.FixtureAdapter
-import com.example.soccerleagueproject.Adapters.ListViewAdapter
 import com.example.soccerleagueproject.Network.TeamShowService
 import com.example.soccerleagueproject.R
-import com.example.soccerleagueproject.UI.List.TeamListViewModel
+import com.example.soccerleagueproject.UI.FixturesOnBoardings.utils.OnSwipeTouchListener
 import com.example.soccerleagueproject.databinding.FragmentFixturesBinding
 import com.example.soccerleagueproject.model.Fixture
 import com.example.soccerleagueproject.model.TeamsItem
@@ -26,13 +26,20 @@ import kotlin.collections.ArrayList
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import kotlin.math.round
 
 class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
     private val viewModel: FixtureCreateViewModel by viewModels()
     private lateinit var binding: FragmentFixturesBinding
     private var adapter= FixtureAdapter()
     var fixture = arrayListOf<Fixture>()
+    private var TOTAL_NUM_ITEMS = 0
+    private var ITEMS_PER_PAGE = 0
+    private var ITEMS_REMAINING = 0
+    private var LAST_PAGE = 0
+    private var currentPage = 0
+    private var totalPages = 0
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,35 +52,97 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
         viewModel.getTeams()
         initViews()
         observeViewModel()
-
-
-
-
     }
 
     private fun initViews() {
         binding.rvFixture.layoutManager=LinearLayoutManager(context)
         binding.rvFixture.adapter=adapter
-        val adapter = OnBoardingAdapter(requireActivity())
-        binding.onboardingViewPager.adapter = adapter
-        binding.onboardingViewPager.setPageTransformer(ZoomOutPageTransformer())
-        binding.dotsIndicator.setViewPager2(binding.onboardingViewPager)
+
     }
 
     private fun observeViewModel(){
         viewModel.showListLiveData.observe(viewLifecycleOwner) {
         val rounds=getFixtures(it,true)
+
             for (i in rounds.indices) {
                 for (fixtures in rounds[i]) {
                     fixture.add(fixtures)
                 }
             }
-            adapter.setFixtureList(fixture)
 
+            TOTAL_NUM_ITEMS = fixture.size
+            ITEMS_PER_PAGE = fixture.size / rounds.size
+            ITEMS_REMAINING = TOTAL_NUM_ITEMS % ITEMS_PER_PAGE
+            LAST_PAGE = TOTAL_NUM_ITEMS / ITEMS_PER_PAGE
+            Log.v("Fixtures","$ITEMS_PER_PAGE")
+            Log.v("FixturesSize","$TOTAL_NUM_ITEMS")
+            totalPages = TOTAL_NUM_ITEMS / ITEMS_PER_PAGE
+            adapter.setFixtureList(generatePage(currentPage) as ArrayList<Fixture>)
+            binding.week.setText("Week " + (currentPage + 1).toString())
+            binding.rvFixture.setOnTouchListener(object : OnSwipeTouchListener(requireContext()) {
+                override fun onSwipeRight() {
+                    if (currentPage == totalPages) {
+                        currentPage -= 1
+                       binding.week.setText("Week " + (currentPage + 1).toString())
+                        val slide = Slide()
+                        slide.slideEdge = Gravity.END
+                        TransitionManager.beginDelayedTransition(binding.rvFixture, slide)
+                       adapter.setFixtureList(generatePage(currentPage) as ArrayList<Fixture>)
+                    } else if (currentPage >= 1 && currentPage < totalPages) {
+                        currentPage -= 1
+                        binding.week.setText("Week " + (currentPage + 1).toString())
+                        val slide = androidx.transition.Slide()
+                        slide.slideEdge = Gravity.END
+                        androidx.transition.TransitionManager.beginDelayedTransition(binding.rvFixture, slide)
+                        adapter.setFixtureList(generatePage(currentPage) as ArrayList<Fixture>)
+                    } else {
+                    }
+                }
+
+                override fun onSwipeLeft() {
+                    if (currentPage == 0) {
+                        currentPage += 1
+                        binding.week.setText("Week " + (currentPage + 1).toString())
+                        val slide = androidx.transition.Slide()
+                        slide.slideEdge = Gravity.START
+                        androidx.transition.TransitionManager.beginDelayedTransition(binding.rvFixture, slide)
+                        adapter.setFixtureList(generatePage(currentPage) as ArrayList<Fixture>)
+                    } else if (currentPage >= 1 && currentPage < totalPages) {
+                        currentPage += 1
+                        if (currentPage == totalPages) {
+                            binding.week.setText("Week $currentPage")
+                        } else {
+                            binding.week.setText("Week " + (currentPage + 1).toString())
+                        }
+                        val slide = androidx.transition.Slide()
+                        slide.slideEdge = Gravity.START
+                        androidx.transition.TransitionManager.beginDelayedTransition(binding.rvFixture, slide)
+                       adapter.setFixtureList(generatePage(currentPage) as ArrayList<Fixture>)
+                    } else {
+                    }
+                }
+            })
         }
         viewModel.errorStateLiveData.observe(this) {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-        } }
+        }
+    }
+
+    private fun generatePage(currentPage: Int): List<Fixture>? {
+        val startItem = currentPage * ITEMS_PER_PAGE
+        val numOfData = ITEMS_PER_PAGE
+        val pageData = java.util.ArrayList<Fixture>()
+        if (currentPage == LAST_PAGE && ITEMS_REMAINING > 0) {
+            for (i in startItem until startItem + ITEMS_REMAINING) {
+                pageData.add(fixture[i])
+            }
+        } else {
+            for (i in startItem until startItem + numOfData) {
+                pageData.add(fixture[i])
+            }
+        }
+        return pageData
+    }
 
 
     var teamList: List<TeamsItem>? = null
@@ -99,6 +168,7 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
 
         })
         var numberOfTeams = teams.size
+        Log.v("TeamsSize","Response="+teams)
         var byeTeam = false
         if (numberOfTeams % 2 != 0) {
             numberOfTeams++
@@ -130,7 +200,7 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
             }
         }
         rounds = interleaved
-        for (roundNumber in rounds.indices) {
+        for (roundNumber in rounds.indices+1) {
             if (roundNumber % 2 == 1) {
                 val (homeTeam, awayTeam) = rounds[roundNumber][0]
                 rounds[roundNumber][0] = Fixture(awayTeam, homeTeam)
@@ -151,3 +221,5 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
         return rounds
     }
 }
+
+
