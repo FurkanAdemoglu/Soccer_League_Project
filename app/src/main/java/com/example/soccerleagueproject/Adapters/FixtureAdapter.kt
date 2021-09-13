@@ -18,12 +18,15 @@ class FixtureAdapter: RecyclerView.Adapter<FixtureAdapter.ListViewHolder>() {
         val textViewHomeName = itemView.findViewById<TextView>(R.id.home_team_name)
         val textViewAwayName=itemView.findViewById<TextView>(R.id.away_team_name)
         fun bind(fixture: Fixture) {
-            textViewHomeName.text = fixture.homeTeam.toString()
-            textViewAwayName.text=fixture.awayTeam.toString()
+            textViewHomeName.text = fixture.homeTeam.teamName
+            textViewAwayName.text=fixture.awayTeam.teamName
         }
 
     }
-
+    fun setFixtureList(fixtureList: ArrayList<Fixture>) {
+        this.fixtureList = fixtureList
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_fixture, parent, false)
         return ListViewHolder(view)

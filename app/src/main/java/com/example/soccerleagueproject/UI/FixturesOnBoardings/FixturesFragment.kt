@@ -68,9 +68,7 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
                     fixture.add(fixtures)
                 }
             }
-            adapter.apply {
-                fixture
-            }
+            adapter.setFixtureList(fixture)
 
         }
         viewModel.errorStateLiveData.observe(this) {
