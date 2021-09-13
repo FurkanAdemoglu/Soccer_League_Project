@@ -1,6 +1,7 @@
 package com.example.soccerleagueproject.UI.List
 
 import android.animation.Animator
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,7 +39,41 @@ class TeamListFragment : Fragment(R.layout.fragment_team_list) {
         viewModel.getTeams()
         initView()
         observeViewModel()
+        _binding.changeTheme.setOnClickListener { chooseThemeDialog() }
+    }
 
+    private fun chooseThemeDialog() {
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.choose_theme_text))
+        val styles = arrayOf("Light","Dark","System default")
+        val checkedItem = 0
+
+        builder.setSingleChoiceItems(styles, checkedItem) { dialog, which ->
+            when (which) {
+                0 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                   // delegate.applyDayNight()
+                    dialog.dismiss()
+                }
+                1 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    //delegate.applyDayNight()
+
+                    dialog.dismiss()
+                }
+                2 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                   // delegate.applyDayNight()
+                    dialog.dismiss()
+                }
+
+            }
+
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
     private fun initView(){
         _binding.teamRecycler.layoutManager=LinearLayoutManager(context)

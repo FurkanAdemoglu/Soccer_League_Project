@@ -57,7 +57,6 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
     private fun initViews() {
         binding.rvFixture.layoutManager=LinearLayoutManager(context)
         binding.rvFixture.adapter=adapter
-
     }
 
     private fun observeViewModel(){
@@ -143,8 +142,6 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
         }
         return pageData
     }
-
-
     var teamList: List<TeamsItem>? = null
     fun getFixtures(
         teams: List<TeamsItem?>,
@@ -168,7 +165,6 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
 
         })
         var numberOfTeams = teams.size
-        Log.v("TeamsSize","Response="+teams)
         var byeTeam = false
         if (numberOfTeams % 2 != 0) {
             numberOfTeams++
@@ -179,11 +175,11 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
         var rounds: MutableList<MutableList<Fixture>> = LinkedList<MutableList<Fixture>>()
         for (round in 1 until totalRounds + 1) {
             val fixtures: MutableList<Fixture> = LinkedList<Fixture>()
-            for (match in 1 until matchesPerRound + 1) {
-                val home = (round + match) % (numberOfTeams - 1)
+            for (match in 0 until matchesPerRound + 1) {
+                val home = (round + match) % (numberOfTeams )
                 var away = (numberOfTeams - 1 - match + round) % (numberOfTeams - 1)
                 if (match == 0) {
-                    away = numberOfTeams - 2
+                    away = numberOfTeams -1
                 }
                 fixtures.add(Fixture(teams[home]!!, teams[away]!!))
             }
