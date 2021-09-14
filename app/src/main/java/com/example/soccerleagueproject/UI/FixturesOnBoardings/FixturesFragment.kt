@@ -39,7 +39,6 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
     private var currentPage = 0
     private var totalPages = 0
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -68,7 +67,6 @@ class FixturesFragment: Fragment(R.layout.fragment_fixtures) {
                     fixture.add(fixtures)
                 }
             }
-
             TOTAL_NUM_ITEMS = fixture.size
             ITEMS_PER_PAGE = fixture.size / rounds.size
             ITEMS_REMAINING = TOTAL_NUM_ITEMS % ITEMS_PER_PAGE

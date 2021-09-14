@@ -18,7 +18,6 @@ class FixtureAdapter: RecyclerView.Adapter<FixtureAdapter.FixturesViewHolder>() 
             textViewHomeName.text = fixture.homeTeam.teamName
             textViewAwayName.text=fixture.awayTeam.teamName
         }
-
     }
     fun setFixtureList(fixtureList: ArrayList<Fixture>) {
         this.fixtureList = fixtureList

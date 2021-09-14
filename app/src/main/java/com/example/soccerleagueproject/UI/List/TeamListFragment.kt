@@ -2,6 +2,7 @@ package com.example.soccerleagueproject.UI.List
 
 import android.animation.Animator
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.soccerleagueproject.Adapters.ListViewAdapter
@@ -39,39 +41,50 @@ class TeamListFragment : Fragment(R.layout.fragment_team_list) {
         viewModel.getTeams()
         initView()
         observeViewModel()
+        checkTheme()
         _binding.changeTheme.setOnClickListener { chooseThemeDialog() }
     }
 
+    private fun checkTheme() {
+        when (MyPreferences(requireContext()).darkMode) {
+            0 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+            }
+            1 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+            }
+            2 -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            } } }
     private fun chooseThemeDialog() {
 
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(getString(R.string.choose_theme_text))
         val styles = arrayOf("Light","Dark","System default")
-        val checkedItem = 0
+        val checkedItem = MyPreferences(requireContext()).darkMode
 
         builder.setSingleChoiceItems(styles, checkedItem) { dialog, which ->
             when (which) {
                 0 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                   // delegate.applyDayNight()
+                    MyPreferences(requireContext()).darkMode = 0
                     dialog.dismiss()
                 }
                 1 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    //delegate.applyDayNight()
-
+                    MyPreferences(requireContext()).darkMode = 1
                     dialog.dismiss()
                 }
                 2 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                   // delegate.applyDayNight()
+                    MyPreferences(requireContext()).darkMode = 2
                     dialog.dismiss()
                 }
 
             }
-
         }
-
         val dialog = builder.create()
         dialog.show()
     }
@@ -81,6 +94,7 @@ class TeamListFragment : Fragment(R.layout.fragment_team_list) {
         _binding.drawFixtureButton.setOnClickListener {
             _binding.listToFixtureAnimation.visibility = View.VISIBLE
             _binding.teamRecycler.visibility=View.GONE
+            _binding.changeTheme.visibility=View.GONE
             _binding.drawFixtureButton.visibility=View.GONE
             _binding.listToFixtureAnimation.setAnimation(R.raw.soccer)
             _binding.listToFixtureAnimation.playAnimation()
@@ -113,6 +127,19 @@ class TeamListFragment : Fragment(R.layout.fragment_team_list) {
         viewModel.errorStateLiveData.observe(this) {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         } }
+}
+
+class MyPreferences(context: Context?) {
+
+    companion object {
+        private const val DARK_STATUS = "io.github.manuelernesto.DARK_STATUS"
+    }
+
+    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    var darkMode = preferences.getInt(DARK_STATUS, 0)
+        set(value) = preferences.edit().putInt(DARK_STATUS, value).apply()
+
 }
 
 

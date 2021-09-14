@@ -14,12 +14,10 @@ class ListViewAdapter: RecyclerView.Adapter<ListViewAdapter.ListViewHolder>() {
 
 
     class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val containerCardView = itemView.findViewById<CardView>(R.id.containerCardView)
         val textViewName = itemView.findViewById<TextView>(R.id.name)
         fun bind(team: TeamsItem) {
             textViewName.text = team.teamName
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
