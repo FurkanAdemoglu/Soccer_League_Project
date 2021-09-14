@@ -10,6 +10,7 @@
         android:id="@+id/teamRecycler"
         android:layout_width="match_parent"
         android:layout_height="658dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/drawFixtureButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,13 +29,13 @@
         android:textAllCaps="false"
         android:textColor="#ffff"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/teamRecycler" />
 
     <Button
         android:id="@+id/changeTheme"
         android:layout_width="182dp"
         android:layout_height="42dp"
-        android:layout_marginStart="30dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/button_style"
@@ -44,7 +45,6 @@
         android:textColor="#ffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/drawFixtureButton"
         app:layout_constraintTop_toBottomOf="@+id/teamRecycler"
         app:layout_constraintVertical_bias="0.833" />
 
